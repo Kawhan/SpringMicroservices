@@ -32,7 +32,7 @@ public class FilterTokenJWT extends GenericFilterBean {
         String method = req.getMethod();
         String uri = req.getRequestURI();
 
-        if (!method.equals("GET")) {
+        if (!method.equals("GET") && !uri.startsWith("/auth/users")) {
             if (header == null || !header.startsWith("Bearer ")) {
                 ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
                         "Nonexistent or poorly formatted token!");

@@ -66,7 +66,7 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "Conflict if this user already exists",
                     content = @Content)
     })
-    @PostMapping("v1/api/users")
+    @PostMapping("auth/users")
     @ResponseStatus(code=HttpStatus.CREATED)
     public UserResponseDTO registerUser(@RequestBody @Valid UserRequestDTO userRequestDTO) {
         return userService.registerUser(userRequestDTO);
