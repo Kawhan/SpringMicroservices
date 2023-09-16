@@ -5,12 +5,22 @@ import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobRequestDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobResponseDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobResponseInterestedUsersDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobTitleRequestDTO;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.TokenRequestDTO;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.UserRequestDTO;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.UserResponseDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.entity.Job;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.entity.User;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.enums.RoleUser;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.enums.TypeJob;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.exception.NotAuthorizedException;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.exception.NotFoundJobException;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.exception.NotFoundUserException;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.exception.UserAlreadyExistsException;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.mappers.JobMapper;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.repository.AuthClient;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.repository.JobRepository;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,32 +28,27 @@ import java.util.List;
 import java.util.Optional;
 
 
+@RequiredArgsConstructor
 @Service
 public class JobService {
-    @Autowired
-    JobRepository jobRepository;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    JobMapper jobMapper;
-
-    @Autowired
-    JWTService jwtService;
+    private final JobRepository jobRepository;
+    private final UserRepository userRepository;
+    private final JobMapper jobMapper;
+    private final AuthClient authClient;
 
     public List<JobResponseDTO> getAllJobs() {
         return JobResponseDTO.fromAll(jobRepository.findAll());
     }
 
     public List<JobResponseDTO> getAllInterestsFromUser(String header) {
-        User userLogged = this.getUser(jwtService.getTokenSubject(header));
+        User userLogged = this.getUser(authClient.getAuthToke(header));
 
         return JobResponseDTO.fromAll(jobRepository.findJobsByUserIdInterested(userLogged.getId()));
     }
 
     public JobResponseDTO createJob(JobRequestDTO jobRequestDTO, String header) {
-        User userLogged = this.getUser(jwtService.getTokenSubject(header));
+        User userLogged = this.getUser(authClient.getAuthToke(header));
 
         if (userLogged.getRoleUser().equals(RoleUser.PROFESSOR)) {
             Job newJob = new Job(
@@ -71,7 +76,7 @@ public class JobService {
             throw new NotFoundJobException();
         }
 
-        User userLogged = this.getUser(jwtService.getTokenSubject(header));
+        User userLogged = this.getUser(authClient.getAuthToke(header));
 
         if (userLogged.getRoleUser().equals(RoleUser.STUDENT)) {
             if (job.get().userInterested(userLogged)) {
@@ -83,6 +88,23 @@ public class JobService {
             job.get().addInterest();
             return JobResponseInterestedUsersDTO.from(jobRepository.save(job.get()));
         } else throw new NotAuthorizedException();
+    }
+
+    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+        Optional<User> userFound = userRepository.findByEmail(userRequestDTO.getEmail());
+
+        if (userFound.isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+
+        User newUser = new User(
+                userRequestDTO.getEmail(),
+                userRequestDTO.getName(),
+                userRequestDTO.getRoleUser(),
+                userRequestDTO.getAuthID()
+        );
+        User user = userRepository.save(newUser);
+        return UserResponseDTO.from(user);
     }
 
     public JobResponseDTO getJob(long id) {
@@ -107,7 +129,7 @@ public class JobService {
             throw new NotFoundJobException();
         }
 
-        User userLogged = this.getUser(jwtService.getTokenSubject(header));
+        User userLogged = this.getUser(authClient.getAuthToke(header));
 
         if (userLogged.getRoleUser().equals(RoleUser.PROFESSOR) && job.get().getUserCreator().equals(userLogged)) {
             Job updateJob = jobMapper.updateJobFromDto(jobRequestDTO, job.get());
@@ -123,7 +145,7 @@ public class JobService {
             throw new NotFoundJobException();
         }
 
-        User userLogged = this.getUser(jwtService.getTokenSubject(header));
+        User userLogged = this.getUser(authClient.getAuthToke(header));
 
         if (userLogged.getRoleUser().equals(RoleUser.PROFESSOR) && job.get().getUserCreator().equals(userLogged)) {
             job.get().setTitleJob(jobTitleRequestDTO.getTitleJob());
@@ -138,7 +160,7 @@ public class JobService {
             throw new NotFoundJobException();
         }
 
-        User userLogged = this.getUser(jwtService.getTokenSubject(header));
+        User userLogged = this.getUser(authClient.getAuthToke(header));
 
         if (userLogged.getRoleUser().equals(RoleUser.PROFESSOR) && job.get().getUserCreator().equals(userLogged)) {
             jobRepository.delete(job.get());

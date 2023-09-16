@@ -1,6 +1,6 @@
 package br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto;
 
-import br.ufpb.dcx.oppfyhub.opportunityhub.enums.RoleUser;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.enums.RoleUser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,11 +19,11 @@ public class UserRequestDTO {
     @NotNull
     private String email;
 
-    @JsonProperty("password")
-    @NotNull
-    private String password;
-
     @JsonProperty("roleUser")
     @NotNull
     private RoleUser roleUser;
+
+    @JsonProperty("authID")
+    @NotNull
+    private long authID;
 }

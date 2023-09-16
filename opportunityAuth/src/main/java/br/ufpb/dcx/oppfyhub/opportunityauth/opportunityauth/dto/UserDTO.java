@@ -1,6 +1,6 @@
 package br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto;
 
-import br.ufpb.dcx.oppfyhub.opportunityhub.entity.User;
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

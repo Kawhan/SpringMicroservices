@@ -1,6 +1,6 @@
 package br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto;
 
-import br.ufpb.dcx.oppfyhub.opportunityhub.enums.TypeJob;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.enums.TypeJob;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

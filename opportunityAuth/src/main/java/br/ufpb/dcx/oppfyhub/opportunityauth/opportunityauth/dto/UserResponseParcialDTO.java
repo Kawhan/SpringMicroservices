@@ -1,8 +1,9 @@
-package br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto;
+package br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto;
 
 
-import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.entity.User;
-import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.enums.RoleUser;
+
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.entity.User;
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.enums.RoleUser;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
-public class UserResponseDTO {
+public class UserResponseParcialDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

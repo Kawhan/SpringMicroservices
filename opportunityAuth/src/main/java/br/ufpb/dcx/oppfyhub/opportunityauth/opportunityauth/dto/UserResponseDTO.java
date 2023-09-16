@@ -1,7 +1,7 @@
 package br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto;
 
-import br.ufpb.dcx.oppfyhub.opportunityhub.entity.User;
-import br.ufpb.dcx.oppfyhub.opportunityhub.enums.RoleUser;
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.entity.User;
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.enums.RoleUser;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

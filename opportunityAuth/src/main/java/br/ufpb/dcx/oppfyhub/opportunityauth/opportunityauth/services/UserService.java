@@ -3,26 +3,29 @@ package br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.services;
 
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.LoginUserDTO;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.UserRequestDTO;
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.UserRequestParcialDTO;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.UserResponseDTO;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.entity.User;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.enums.RoleUser;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.exception.NotAuthorizedException;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.exception.NotFoundUserException;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.exception.UserAlreadyExistsException;
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.repository.JobClient;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final JWTService jwtService;
+    private final JobClient jobClient;
 
-    @Autowired
-    JWTService jwtService;
-
+    @Transactional
     public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
         Optional<User> userFound = userRepository.findByEmail(userRequestDTO.getEmail());
 
@@ -37,6 +40,8 @@ public class UserService {
                 userRequestDTO.getRoleUser()
         );
         User user = userRepository.save(newUser);
+        UserRequestParcialDTO userRequestParcialDTO = UserRequestParcialDTO.from(user);
+        jobClient.createUserJobClient(userRequestParcialDTO);
         return UserResponseDTO.from(user);
     }
 

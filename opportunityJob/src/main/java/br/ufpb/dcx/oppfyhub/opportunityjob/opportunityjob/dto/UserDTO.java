@@ -1,6 +1,6 @@
 package br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto;
 
-import br.ufpb.dcx.oppfyhub.opportunityhub.entity.User;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

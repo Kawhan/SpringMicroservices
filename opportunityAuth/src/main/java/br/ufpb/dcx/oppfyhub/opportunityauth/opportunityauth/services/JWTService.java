@@ -2,6 +2,7 @@ package br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.services;
 
 
 
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.TokenRequestDTO;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.exception.InvalidTokenException;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.filter.FilterTokenJWT;
 import io.jsonwebtoken.JwtParser;

@@ -5,6 +5,9 @@ import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobRequestDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobResponseDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobResponseInterestedUsersDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.JobTitleRequestDTO;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.UserDTO;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.UserRequestDTO;
+import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.dto.UserResponseDTO;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.entity.Job;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.enums.TypeJob;
 import br.ufpb.dcx.oppfyhub.opportunityjob.opportunityjob.service.JobService;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -160,6 +164,12 @@ public class JobController {
     @ResponseStatus(code = HttpStatus.OK)
     public JobResponseInterestedUsersDTO realizeInterest(@PathVariable long id, @Parameter(description = "Bearer token authorization", required = true,hidden = true , schema = @Schema(implementation = String.class))  @RequestHeader("Authorization") String header) {
         return jobService.realizeInterest(id, header);
+    }
+
+    @PostMapping("createUser")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public UserResponseDTO createUser(@RequestBody @Valid UserRequestDTO userRequestDTO) {
+        return jobService.createUser(userRequestDTO);
     }
 
     // Puts

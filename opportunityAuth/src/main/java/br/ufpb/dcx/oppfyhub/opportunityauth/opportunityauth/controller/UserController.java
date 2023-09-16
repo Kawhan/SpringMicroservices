@@ -1,8 +1,10 @@
 package br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.controller;
 
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.TokenRequestDTO;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.UserRequestDTO;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.dto.UserResponseDTO;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.entity.User;
+import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.services.JWTService;
 import br.ufpb.dcx.oppfyhub.opportunityauth.opportunityauth.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,6 +32,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    JWTService jwtService;
+
 
     // Gets
 
@@ -45,7 +50,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized user",
                     content = @Content),
     })
-    @GetMapping("/auth/user/{email}")
+    @GetMapping("/auth/users/{email}")
     @ResponseStatus(code=HttpStatus.OK)
     public UserResponseDTO getUser(@PathVariable String email,
                                        @Parameter(description = "Bearer token authorization", required = true,hidden = true , schema = @Schema(implementation = String.class)) @RequestHeader("Authorization") String header) {
@@ -72,7 +77,11 @@ public class UserController {
         return userService.registerUser(userRequestDTO);
     }
 
-
+    @GetMapping("auth/getToken")
+    @ResponseStatus(code = HttpStatus.OK)
+    public String getAuthToke(@Parameter(description = "Bearer token authorization", required = true,hidden = true , schema = @Schema(implementation = String.class)) @RequestHeader("Authorization") String header) {
+        return jwtService.getTokenSubject(header);
+    }
 
     // Deletes
     @Operation(
